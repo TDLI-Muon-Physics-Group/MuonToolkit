@@ -92,7 +92,7 @@ if [[ "$INSTALL_ROOT" -eq "1" ]]; then
     echo "Installing root : v${ROOT_VERSION}"; sleep 3
     refresh
     cd $BUILD_PREFIX
-    test -d root-$ROOT_VERSION || wget_untar https://root.cern/download/root_v${ROOT_VERSOIN}.source.tar.gz
+    test -d root-$ROOT_VERSION || wget_untar https://root.cern/download/root_v${ROOT_VERSION}.source.tar.gz
     mkdir root; mv root-$ROOT_VERSION ./root; cd root
     mkdir build install; cd build
     cmake -G Ninja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ../root-$ROOT_VERSION 
