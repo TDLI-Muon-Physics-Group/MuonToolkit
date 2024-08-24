@@ -20,8 +20,8 @@ test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="1"
 test -z "$INSTALL_PARAVIEW" && INSTALL_PARAVIEW="1"
 
 # packages version
-test -z "$ROOT_VERSION" && ROOT_VERSION="6.28.12"
 test -z "$OPENMPI_VERSION" && OPENMPI_VERSION="4.1.4"
+test -z "$ROOT_VERSION" && ROOT_VERSION="6.28.12"
 test -z "$CLHEP_VERSION" && CLHEP_VERSION="2.4.7.1"
 test -z "$GEANT4_VERSION" && GEANT4_VERSION="10.7.3"
 test -z "$PARAVIEW_VERSION" && PARAVIEW_VERSION="5.11.2"
@@ -95,9 +95,9 @@ if [[ "$INSTALL_ROOT" -eq "1" ]]; then
     test -d root-$ROOT_VERSION || wget_untar https://root.cern/download/root_v${ROOT_VERSOIN}.source.tar.gz
     mkdir root; mv root-$ROOT_VERSION ./root; cd root
     mkdir build install; cd build
-    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=../install ../root-$ROOT_VERSION 
+    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ../root-$ROOT_VERSION 
     cmake --build . --target install -- -j${nproc}
-    addbashrc "source"
+    addbashrc "source $INSTALL_PREFIX/bin/thisroot.sh"
     echo "Done."; sleep 3
 fi
 
