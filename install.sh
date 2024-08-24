@@ -15,9 +15,9 @@ test -z "$INSTALL" && INSTALL="cmake --install ."
 # installation switches
 test -z "$INSTALL_OPENMPI" && INSTALL_OPENMPI="0"
 test -z "$INSTALL_ROOT" && INSTALL_ROOT="1"
-test -z "$INSTALL_CLHEP" && INSTALL_CLHEP="1"
-test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="1"
-test -z "$INSTALL_PARAVIEW" && INSTALL_PARAVIEW="1"
+test -z "$INSTALL_CLHEP" && INSTALL_CLHEP="0"
+test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="0"
+test -z "$INSTALL_PARAVIEW" && INSTALL_PARAVIEW="0"
 
 # packages version
 test -z "$OPENMPI_VERSION" && OPENMPI_VERSION="4.1.4"
@@ -96,7 +96,7 @@ if [[ "$INSTALL_ROOT" -eq "1" ]]; then
     mkdir root; mv root-$ROOT_VERSION ./root; cd root
     mkdir build install; cd build
     cmake -G Ninja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ../root-$ROOT_VERSION 
-    cmake --build . --target install -- -j${nproc}
+    cmake --build . --target install -- -j$(nproc)
     addbashrc "source $INSTALL_PREFIX/bin/thisroot.sh"
     echo "Done."; sleep 3
 fi
