@@ -16,8 +16,12 @@ self-contain script to install geant4
 # pre-requisite packages
 
 ## Ubuntu
- - ROOT
-   Dependencies: https://root.cern/install/dependencies/#ubuntu-and-other-debian-based-distributions
+ use ```sudo```
+ - essential
+   ```
+   apt update
+   apt install build-essential
+   ```
    
  - GEANT4
    ```
