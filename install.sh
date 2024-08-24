@@ -14,11 +14,13 @@ test -z "$INSTALL" && INSTALL="cmake --install ."
 
 # installation switches
 test -z "$INSTALL_OPENMPI" && INSTALL_OPENMPI="0"
+test -z "$INSTALL_ROOT" && INSTALL_ROOT="1"
 test -z "$INSTALL_CLHEP" && INSTALL_CLHEP="1"
 test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="1"
 test -z "$INSTALL_PARAVIEW" && INSTALL_PARAVIEW="1"
 
 # packages version
+test -z "$ROOT_VERSION" && ROOT_VERSION="6.28.12"
 test -z "$OPENMPI_VERSION" && OPENMPI_VERSION="4.1.4"
 test -z "$CLHEP_VERSION" && CLHEP_VERSION="2.4.7.1"
 test -z "$GEANT4_VERSION" && GEANT4_VERSION="10.7.3"
@@ -31,6 +33,7 @@ mkdir -p $INSTALL_PREFIX
 echo
 echo "OS platform       : $(uname -n)"
 echo "INSTALL_OPENMPI   : $INSTALL_OPENMPI"
+echo "INSTALL_ROOT      : $INSTALL_ROOT"
 echo "INSTALL_CLHEP     : $INSTALL_CLHEP"
 echo "INSTALL_GEANT4    : $INSTALL_GEANT4"
 echo "INSTALL_PARAVIEW  : $INSTALL_PARAVIEW"
@@ -82,6 +85,20 @@ if [[ "$INSTALL_OPENMPI" -eq "1" ]]; then
 
     # append to bash
     addbashrc "export MPI_ROOT=$INSTALL_PREFIX"
+fi
+
+# Install ROOT
+if [[ "$INSTALL_ROOT" -eq "1" ]]; then
+    echo "Installing root : v${ROOT_VERSION}"; sleep 3
+    refresh
+    cd $BUILD_PREFIX
+    test -d root-$ROOT_VERSION || wget_untar https://root.cern/download/root_v${ROOT_VERSOIN}.source.tar.gz
+    mkdir root; mv root-$ROOT_VERSION ./root; cd root
+    mkdir build install; cd build
+    cmake -G Ninja -DCMAKE_INSTALL_PREFIX=../install ../root-$ROOT_VERSION 
+    cmake --build . --target install -- -j${nproc}
+    addbashrc "source"
+    echo "Done."; sleep 3
 fi
 
 # Install CLHEP
