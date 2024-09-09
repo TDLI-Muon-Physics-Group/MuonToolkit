@@ -1,4 +1,4 @@
-# installGeant4
+# Installer
 
 self-contain script to install/maintain software needs for muon physics group at SJTU
 
