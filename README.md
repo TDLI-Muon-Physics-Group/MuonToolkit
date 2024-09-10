@@ -36,7 +36,17 @@ self-contain script to install/maintain software needs for muon physics group at
    sudo apt install python3-dev libxcursor-dev qtbase5-dev qtdeclarative5-dev libqt5help5 libqt5x11extras5-dev libqt5help5 qttools5-dev qtxmlpatterns5-dev-tools libqt5svg5-dev
    ```
 
+ - G4BL
+   ```
+   sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgsl-dev fftw3-dev
+   ```
+
 ## Fedora
+
+ - G4BL
+   ```
+   sudo dfn5 install qt5-qtbase-devel.x86_64 gsl-devel fftw-devel openssl-devel
+   ```
 
 # Installation
 

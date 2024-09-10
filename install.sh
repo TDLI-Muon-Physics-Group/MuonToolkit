@@ -15,9 +15,10 @@ test -z "$INSTALL" && INSTALL="cmake --install ."
 # installation switches
 test -z "$INSTALL_OPENMPI" && INSTALL_OPENMPI="0"
 test -z "$INSTALL_ROOT" && INSTALL_ROOT="1"
-test -z "$INSTALL_CLHEP" && INSTALL_CLHEP="0"
-test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="0"
+test -z "$INSTALL_CLHEP" && INSTALL_CLHEP="1"
+test -z "$INSTALL_GEANT4" && INSTALL_GEANT4="1"
 test -z "$INSTALL_PARAVIEW" && INSTALL_PARAVIEW="0"
+test -z "$INSTALL_G4BL" && INSTALL_G4BL="1"
 
 # packages version
 test -z "$OPENMPI_VERSION" && OPENMPI_VERSION="4.1.4"
@@ -25,6 +26,7 @@ test -z "$ROOT_VERSION" && ROOT_VERSION="6.28.12"
 test -z "$CLHEP_VERSION" && CLHEP_VERSION="2.4.7.1"
 test -z "$GEANT4_VERSION" && GEANT4_VERSION="10.7.3"
 test -z "$PARAVIEW_VERSION" && PARAVIEW_VERSION="5.11.2"
+test -z "$G4BL_VERSION" && G4BL_VERSION="3.08" # Hardcoded
 
 test -n "$DEBUG" && set -x
 mkdir -p $INSTALL_PREFIX
@@ -37,12 +39,14 @@ echo "INSTALL_ROOT      : $INSTALL_ROOT"
 echo "INSTALL_CLHEP     : $INSTALL_CLHEP"
 echo "INSTALL_GEANT4    : $INSTALL_GEANT4"
 echo "INSTALL_PARAVIEW  : $INSTALL_PARAVIEW"
+echo "INSTALL_G4BL      : $INSTALL_G4BL"
 echo
 sleep 5
 
 # function
 function checkcommand { if ! command -v $1 &> /dev/null; then echo "$1 could not be found"; exit 1; fi } 
-function wget_untar { wget --progress=bar:force --no-check-certificate $1 -O- | tar xz; }
+#function wget_untar { wget --progress=bar:force --no-check-certificate $1 -O- | tar xz; }
+function wget_untar { curl -L $1 | tar xz; }
 function conf { ../configure --prefix=$INSTALL_PREFIX "$@"; }
 function conf2 { ./configure --prefix=$INSTALL_PREFIX "$@"; }
 function Cmake { cmake -DCMAKE_GENERATOR=Ninja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$@"; }
@@ -98,6 +102,11 @@ if [[ "$INSTALL_ROOT" -eq "1" ]]; then
     cmake -G Ninja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ../root-$ROOT_VERSION 
     cmake --build . --target install -- -j$(nproc)
     addbashrc "source $INSTALL_PREFIX/bin/thisroot.sh"
+    addbashrc "export ROOTSYS=$INSTALL_PREFIX"
+    addbashrc "export PATH=$PATH:$ROOTSYS/bin"
+    addbashrc "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTSYS/lib"
+    addbashrc "source $ROOTSYS/bin/thisroot.sh"
+
     echo "Done."; sleep 3
 fi
 
@@ -169,7 +178,7 @@ if [[ "$INSTALL_PARAVIEW" -eq "1" ]]; then
     cd ParaView-v${PARAVIEW_VERSION}
     mkdir build; cd build
     # patch 1
-    patch $BUILD_PREFIX/ParaView-v${PARAVIEW_VERSION}/VTK/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp < $BUILD_PREFIX/proj_json_streaming_writer.patch
+    patch $BUILD_PREFIX/ParaView-v${PARAVIEW_VERSION}/VTK/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp < $BUILD_PREFIX/patch/proj_json_streaming_writer.patch
     Cmake \
 	-DPARAVIEW_USE_PYTHON=ON \
 	$BUILD_PREFIX/ParaView-v${PARAVIEW_VERSION}
@@ -177,4 +186,21 @@ if [[ "$INSTALL_PARAVIEW" -eq "1" ]]; then
     mmi
 
     echo "Done."; sleep 3
+fi
+
+# install G4BL
+if [[ "$INSTALL_G4BL" -eq "1" ]]; then
+
+    echo "Installing G4BL : v${G4BL_VERSION}"; sleep 3
+    addbashrc "export PATH=/usr/lib64/qt5/bin:$PATH"
+    addbashrc "export GSL_DIR=/usr"
+    addbashrc "export FFTW_DIR=/usr"
+    addbashrc "export GEANT4_DIR=$INSTALL_PREFIX"
+    refresh
+    cd $BUILD_PREFIX
+    test -d G4beamline-${G4BL_VERSION}-source || tar xvf ${BUILD_PREFIX}/packages/G4beamline-${G4BL_VERSION}-source.tgz
+    mkdir G4beamline-${G4BL_VERSION}
+    cd G4beamline-${G4BL_VERSION}
+    cmake -G Ninja ../G4beamline-${G4BL_VERSION}-source
+    cmake --build . --config Release --target install
 fi
