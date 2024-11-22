@@ -62,7 +62,7 @@ function addbashrc {
 }
 ################################################
 checkcommand cmake
-checkcommand ccmake
+#checkcommand ccmake
 
 function addbashrc2 {
     [[ ":$PATH:" != *":$@:"* ]] && PATH="$@:\$PATH"
