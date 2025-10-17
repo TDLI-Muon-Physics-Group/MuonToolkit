@@ -1,59 +1,123 @@
-# Installer
+# Physics Software Stack Installer
 
-self-contain script to install/maintain software needs for muon physics group at SJTU
+A comprehensive bash script to install ROOT, Geant4, and CLHEP for particle physics simulation and data analysis.
 
-# pinned version
+## 🚀 Quick Start
 
- - v1
- ```
- OPENMPI_VERSION="4.1.4"
- ROOT_VERSION="6.28.12"
- CLHEP_VERSION="2.4.7.1"
- GEANT4_VERSION="10.7.3"
- PARAVIEW_VERSION="5.11.2"
- ```
-
-# pre-requisite packages
-
-## Ubuntu
-
- - essential
-   ```
-   sudo apt update
-   sudo apt install build-essential
-   ```
-   
- - ROOT
-   Dependencies: https://root.cern/install/dependencies/#ubuntu-and-other-debian-based-distributions
-   
- - GEANT4
-   ```
-   sudo apt install libxerces-c-dev libexpat1-dev libcoin-dev libsoqt-dev libmotif-dev
-   ```
-
- - PARAVIEW
-   ```
-   sudo apt install python3-dev libxcursor-dev qtbase5-dev qtdeclarative5-dev libqt5help5 libqt5x11extras5-dev libqt5help5 qttools5-dev qtxmlpatterns5-dev-tools libqt5svg5-dev
-   ```
-
- - G4BL
-   ```
-   sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools libgsl-dev fftw3-dev
-   ```
-
-## Fedora
-
- - G4BL
-   ```
-   sudo dfn5 install qt5-qtbase-devel.x86_64 gsl-devel fftw-devel openssl-devel
-   ```
-
-# Installation
-
-In clean folder, do
-
-```
-./install.sh
+```bash
+# Download the installer and configuration file
+# Make the script executable
+chmod +x starterpack.sh
 ```
 
-that's it.
+## 📋 Platform
+
+## macOS
+- Homebrew (automatically installed if missing)
+- Xcode Command Line Tools
+
+## Linux
+- Basic build tools (gcc, g++, make)
+
+## 🛠️  Features
+
+- Cross-Platform: macOS, Ubuntu, Debian, RedHat, CentOS, Fedora, Arch
+- Auto-Dependency Management: Installs system dependencies automatically
+- Parallel Builds: Uses all CPU cores
+- Error Handling: Comprehensive error checking
+- Smart Detection: Uses system libraries when available
+
+## 📦 Pinned Software Versions
+
+- ROOT: 6.32.08 (Data analysis framework)
+- Geant4: 11.3.2 (Particle physics simulation)
+- CLHEP: 2.4.7.1 (High Energy Physics library)
+
+# Run the installer
+
+## One dragon installation
+
+```bash
+./starterpack.sh
+```
+
+## Individual installation
+The script can install each component separately:
+```bash
+# Install only ROOT
+INSTALL_GEANT4=0 INSTALL_CLHEP=0 ./starterpack.sh
+
+# Install only Geant4 (requires ROOT and CLHEP)
+INSTALL_ROOT=0 ./starterpack.sh
+```
+
+## ⚙️  Installation Options
+
+### Command Line Arguments
+
+```bash
+./starterpack.sh --prefix /custom/path
+./starterpack.sh --no-root          # Skip ROOT
+./starterpack.sh --no-geant4        # Skip Geant4
+./starterpack.sh --no-clhep         # Skip CLHEP
+./starterpack.sh --show-config      # Show config only
+```
+
+### Environment Variables
+
+```bash
+export INSTALL_PREFIX="/custom/path"
+export INSTALL_ROOT=0           # Use system version, else specify your favourite version
+export INSTALL_GEANT4=0         # Use system version, else specify your favourite version
+export INSTALL_CLHEP=0          # Use system version, else specify your favourite version
+./starterpack.sh
+```
+
+
+## 📁 Directory Structure
+
+```text
+MuonToolKits/
+├── starterpack.sh             # Main installer
+├── dependencies.conf          # Configuration
+└── patch/                     # Optional patches
+```
+
+## 🧪 Verification
+
+```bash
+source ~/.bashrc
+root --version
+geant4-config --version
+```
+
+## 🔄 Updates
+
+Edit ```dependencies.conf``` with new versions and rerun the installer.
+
+## 📚 Documentation
+
+- [ROOT Documentation](https://root.cern/install/build_from_source/)
+- [Geant4 Documentation](https://geant4.web.cern.ch)
+- [CLHEP](https://proj-clhep.web.cern.ch/proj-clhep/)
+
+## 🤝 Contributing
+To contribute to this installer:
+
+1. Fork the repository
+2. Make your changes
+3. Test on multiple platforms
+4. Submit a pull request
+
+## 📞 Support
+
+1. Run with debug: ```DEBUG=1 ./install_physics_stack.sh```
+2. Check individual software documentation 📚 :
+  - [ROOT Documentation](https://root.cern/install/build_from_source/)
+  - [Geant4 Documentation](https://geant4.web.cern.ch)
+  - [CLHEP](https://proj-clhep.web.cern.ch/proj-clhep/)
+    
+#
+Note: This installer is designed for research and educational use. Always verify installations in your specific environment before using for production work.
+
+
